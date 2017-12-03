@@ -29,6 +29,23 @@ var albumMarconi = {
         { title: 'Wrong phone number', duration: '2:15'}
     ]
 };
+
+// Lisa's Album
+var albumGraceland = {
+  title: 'Graceland',
+  artist: 'Paul Simon',
+  label: 'Warner Bros.',
+  year: '1986',
+  albumArtUrl: 'assets/images/album_covers/21.png',
+  songs: [
+    { title: 'The Boy in the Buble', duration: '3:59' },
+    { title: 'Graceland', duration: '4:48' },
+    { title: 'I Know What I Know', duration: '3:13'},
+    { title: 'Gumboots', duration: '2:44' },
+    { title: 'Diamonds on the Soles of Her Shoes', duration: '5:45'}
+  ]
+};
+
 var createSongRow = function(songNumber, songName, songLength) {
   var template =
   '<tr class="album-view-song-item">'
@@ -40,14 +57,16 @@ var createSongRow = function(songNumber, songName, songLength) {
 
    return template;
 }
-var setCurrentAlbum = function(album) {
-    // #1
-    var albumTitle = document.getElementsByClassName('album-view-title')[0];
-    var albumArtist = document.getElementsByClassName('album-view-artist')[0];
-    var albumReleaseInfo = document.getElementsByClassName('album-view-release-info')[0];
-    var albumImage = document.getElementsByClassName('album-cover-art')[0];
-    var albumSongList = document.getElementsByClassName('album-view-song-list')[0];
 
+// Global album info
+var albumTitle = document.getElementsByClassName('album-view-title')[0];
+var albumArtist = document.getElementsByClassName('album-view-artist')[0];
+var albumReleaseInfo = document.getElementsByClassName('album-view-release-info')[0];
+var albumImage = document.getElementsByClassName('album-cover-art')[0];
+var albumSongList = document.getElementsByClassName('album-view-song-list')[0];
+
+
+var setCurrentAlbum = function(album) {
     // #2
     albumTitle.firstChild.nodeValue = album.title;
     albumArtist.firstChild.nodeValue = album.artist;
@@ -65,4 +84,16 @@ var setCurrentAlbum = function(album) {
 
 window.onload = function() {
     setCurrentAlbum(albumPicasso);
+
+    var albums = [albumPicasso, albumMarconi, albumGraceland];
+    var index = 1;
+
+    albumImage.addEventListener("click", function(event) {
+      setCurrentAlbum(albums[index]);
+      index++;
+      if (index == albums.length) {
+        index = 0;
+
+      }
+    });
 };
