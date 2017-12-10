@@ -104,6 +104,7 @@ var previousSong = function() {
   //use trackIndex() helper function to get index of current song and then increment value from index
   //Set new current song to currentSongFromAlbum
   currentlyPlayingSongNumber = indexOfNextSong + 1;
+  currentSoundFile.play();
 
   setSong(currentlyPlayingSongNumber);
   revertHtmlToSongNumber(previousSong);
@@ -127,6 +128,7 @@ var nextSong = function() {
   //use trackIndex() helper function to get index of current song and then increment value from index
   //Set new current song to currentSongFromAlbum
   currentlyPlayingSongNumber = indexOfNextSong + 1;
+  currentSoundFile.play();
 
   setSong(currentlyPlayingSongNumber);
   revertHtmlToSongNumber(previousSong);
@@ -158,13 +160,34 @@ var playerBarPauseButton = '<span class="ion-pause"></span>';
 var currentAlbum = null;
 var currentlyPlayingSongNumber = null;
 var currentSongFromAlbum = null;
+var currentSoundFile = null;
+var currentVolume = 80;
+
 
 
 var setSong = function(songNumber) {
+  if (currentSoundFile) {
+    currentSoundFile.stop();
+  }
   currentlyPlayingSongNumber = parseInt(songNumber);
   currentSongFromAlbum = currentAlbum.songs[songNumber - 1];
+  //#1
+  currentSoundFile = new buzz.sound(currentSongFromAlbum.audioUrl, {
+  //#2
+    formats: ['mp3'],
+    preload: true
+  });
+  currentSoundFile.play();
+};
 
-}
+setVolume(currentVolume);
+};
+
+var setVolume = function(volume) {
+  if (currentSoundFile) {
+    currentSoundFile.setVolume(volume);
+  }
+};
 
 var pauseCurrentSong = function() {
   $('.main-controls .play-pause').html(playerBarPlayButton);
