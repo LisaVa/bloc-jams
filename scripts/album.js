@@ -19,7 +19,7 @@ var createSongRow = function(songNumber, songName, songLength) {
 	    if (currentlyPlayingSongNumber !== songNumber) {
 		    // Switch from Play -> Pause button to indicate new song is playing.
 		    $(this).html(pauseButtonTemplate);
-        playSongNumber(songNumber);
+        setSong(songNumber);
       } else if (currentlyPlayingSongNumber === songNumber) {
 		    // Switch from Pause -> Play button to pause currently playing song.
 		    $(this).html(playButtonTemplate);
@@ -105,9 +105,9 @@ var previousSong = function() {
   //Set new current song to currentSongFromAlbum
   currentlyPlayingSongNumber = indexOfNextSong + 1;
 
-  playSongNumber(currentlyPlayingSongNumber);
+  setSong(currentlyPlayingSongNumber);
   revertHtmlToSongNumber(previousSong);
-  getElementForSongNumber(currentlyPlayingSongNumber).html(pauseButtonTemplate);
+  getSongNumberCell(currentlyPlayingSongNumber).html(pauseButtonTemplate);
 
   //update the player bar to show new songs
   //update HTML of previous song's .song-item-number element with a songNumber
@@ -128,9 +128,9 @@ var nextSong = function() {
   //Set new current song to currentSongFromAlbum
   currentlyPlayingSongNumber = indexOfNextSong + 1;
 
-  playSongNumber(currentlyPlayingSongNumber);
+  setSong(currentlyPlayingSongNumber);
   revertHtmlToSongNumber(previousSong);
-  getElementForSongNumber(currentlyPlayingSongNumber).html(pauseButtonTemplate);
+  getSongNumberCell(currentlyPlayingSongNumber).html(pauseButtonTemplate);
 
   //update the player bar to show new songs
   //update HTML of previous song's .song-item-number element with a songNumber
@@ -160,10 +160,10 @@ var currentlyPlayingSongNumber = null;
 var currentSongFromAlbum = null;
 
 
-var playSongNumber = function(songNumber) {
+var setSong = function(songNumber) {
   currentlyPlayingSongNumber = parseInt(songNumber);
   currentSongFromAlbum = currentAlbum.songs[songNumber - 1];
-  updatePlayerBarSong();
+
 }
 
 var pauseCurrentSong = function() {
@@ -172,12 +172,12 @@ var pauseCurrentSong = function() {
   currentSongFromAlbum = null;
 }
 
-var getElementForSongNumber = function(songNumber) {
+var getSongNumberCell = function(songNumber) {
   return $('.song-item-number[data-song-number="' + songNumber + '"]');
 }
 
 var revertHtmlToSongNumber = function(songNumber) {
-  var elem = getElementForSongNumber(songNumber);
+  var elem = getSongNumberCell(songNumber);
   elem.html(songNumber);
 }
 
