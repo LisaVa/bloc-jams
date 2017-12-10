@@ -90,6 +90,7 @@ var $nextButton = $('.main-controls .next');
 var trackIndex = function(album, song) {
   return album.songs.indexOf(song);
 };
+/*
 
 var previousSong = function() {
   //know what the previous song is
@@ -130,6 +131,36 @@ var nextSong = function() {
 
   setSong(currentlyPlayingSongNumber);
   revertHtmlToSongNumber(previousSong);
+  getSongNumberCell(currentlyPlayingSongNumber).html(pauseButtonTemplate);
+
+  //update the player bar to show new songs
+  //update HTML of previous song's .song-item-number element with a songNumber
+  //update the HTML of the new song's .song-item-number element with a pause button
+}
+*/
+
+var previousOrNextSong = function() {
+
+  //know what the previous song is
+  var currentSong = currentlyPlayingSongNumber;
+  var indexOfCurrentSong = trackIndex(currentAlbum, currentSongFromAlbum);
+  var indexOfNextSong = currentSong + 1;
+  var indexOfPreviousSong = currentSong - 1;
+
+  if (indexOfPreviousSong <= -1) {
+    indexOfNextSong = currentAlbum.songs.length - 1;
+  }
+
+  if (indexOfNextSong >= currentAlbum.songs.length) {
+    indexOfNextSong = 0;
+  }
+
+  //use trackIndex() helper function to get index of current song and then increment value from index
+  //Set new current song to currentSongFromAlbum
+  currentlyPlayingSongNumber = indexOfNextSong + 1;
+
+  setSong(currentlyPlayingSongNumber);
+  revertHtmlToSongNumber(currentSong);
   getSongNumberCell(currentlyPlayingSongNumber).html(pauseButtonTemplate);
 
   //update the player bar to show new songs
