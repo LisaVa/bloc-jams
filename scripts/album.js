@@ -3,7 +3,7 @@ var createSongRow = function(songNumber, songName, songLength) {
   '<tr class="album-view-song-item">'
     + '  <td class="song-item-number" data-song-number="' + songNumber + '">' + songNumber + '</td>'
     + '  <td class="song-item-title">' + songName + '</td>'
-    + '  <td class="song-item-duration">' + songLength + '</td>'
+    + '  <td class="song-item-duration">' + filterTimeCode(songLength) + '</td>'
     + '</tr>'
     ;
 
@@ -32,8 +32,6 @@ var createSongRow = function(songNumber, songName, songLength) {
   		    // Switch from Pause -> Play button to pause currently playing song.
   		    $(this).html(pauseButtonTemplate);
           $('.main-controls .play-pause').html(playerBarPauseButton);
-          currentSoundFile.play();
-          updateSeekBarWhileSongPlays()
   	    } else {
           $(this).html(playButtonTemplate);
           $('.main-controls .play-pause').html(playerBarPlayButton);
@@ -107,8 +105,9 @@ var updateSeekBarWhileSongPlays = function() {
       var seekBarFillRatio = this.getTime() / this.getDuration();
       var $seekBar = $('.seek-control .seek-bar');
 
+      setCurrentTimeInPlayerBar(this.getTime());
       updateSeekPercentage($seekBar, seekBarFillRatio);
-      });
+    });
   }
 };
 
@@ -145,7 +144,6 @@ var previousSong = function() {
   //use trackIndex() helper function to get index of current song and then increment value from index
   //Set new current song to currentSongFromAlbum
   currentlyPlayingSongNumber = indexOfNextSong + 1;
-  currentSoundFile.play();
   updateSeekBarWhileSongPlays()
 
   setSong(currentlyPlayingSongNumber);
@@ -171,7 +169,6 @@ var nextSong = function() {
   //use trackIndex() helper function to get index of current song and then increment value from index
   //Set new current song to currentSongFromAlbum
   currentlyPlayingSongNumber = indexOfNextSong + 1;
-  currentSoundFile.play();
   updateSeekBarWhileSongPlays()
 
   setSong(currentlyPlayingSongNumber);
@@ -203,6 +200,7 @@ var updatePlayerBarSong = function() {
   $('.currently-playing .artist-name').text(currentAlbum.artist);
   $('.currently-playing .artist-song-mobile').text(currentSongFromAlbum.title + " - " + currentAlbum.artist);
   $('.main-controls .play-pause').html(playerBarPauseButton);
+  setTotalTimeInPlayerBar(currentSongFromAlbum.duration);
 };
 
 
@@ -231,6 +229,7 @@ var setSong = function(songNumber) {
     preload: true
   });
   currentSoundFile.play();
+  updateSeekBarWhileSongPlays();
   setVolume(currentVolume);
 };
 
@@ -263,11 +262,12 @@ var setupSeekBars = function() {
       var barWidth = $(this).width();
       var seekBarFillRatio = offsetX / barWidth;
 
+
       if ($(this).parent().attr('class') == 'seek-control') {
         seek(seekBarFillRatio * currentSoundFile.getDuration());
-        } else {
-          setVolume(seekBarFillRatio * 100);
-        }
+      } else {
+        setVolume(seekBarFillRatio * 100);
+      }
       updateSeekPercentage($(this), seekBarFillRatio);
     });
 
@@ -287,29 +287,33 @@ var setupSeekBars = function() {
            }
 
         updateSeekPercentage($seekBar, seekBarFillRatio);
-      /*
-      var $seekBar = $(this).parent();
-
-      // #9
-      $(document).bind('mousemove.thumb', function(event){
-        var offsetX = event.pageX - $seekBar.offset().left;
-        var barWidth = $seekBar.width();
-        var seekBarFillRatio = offsetX / barWidth;
-
-        updateSeekPercentage($seekBar, seekBarFillRatio);
       });
 
-      // #10
       $(document).bind('mouseup.thumb', function() {
         $(document).unbind('mousemove.thumb');
         $(document).unbind('mouseup.thumb');
       });
-    });
-    */
-    });
   });
 };
 
+var setCurrentTimeInPlayerBar = function(currentTime) {
+  $('.current-time').text(filterTimeCode(currentTime));
+}
+
+var setTotalTimeInPlayerBar = function(totalTime) {
+  $('.total-time').text(filterTimeCode(totalTime));
+}
+
+var filterTimeCode = function(timeInSeconds) {
+  var parsedSeconds = parseFloat(timeInSeconds);
+  var minutes = Math.floor(parsedSeconds / 60);
+
+  var totalLeftoverSeconds = parsedSeconds - minutes * 60;
+  var tensSeconds = Math.floor(totalLeftoverSeconds / 10);
+  var onesSeconds = Math.round(totalLeftoverSeconds - tensSeconds * 10);
+
+  return minutes + ':' + tensSeconds + onesSeconds;
+}
 
 $(document).ready(function() {
   setCurrentAlbum(albumPicasso);
